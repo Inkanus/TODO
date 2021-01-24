@@ -2,6 +2,7 @@ import json
 import sqlite3
 from sqlite3 import Error
 
+
 class Todos:
     def __init__(self):
         try:
@@ -32,7 +33,7 @@ class Todos:
             self.save_all()
             return True
         return False
-    
+
     def delete(self, id):
         todo = self.get(id)
         if todo:
@@ -48,6 +49,7 @@ class Todos:
 
 class SQLiteTodos:
     FILEPATH = "todos.db"
+
     def __init__(self):
         self.connection = self.connect_to_database(self.FILEPATH)
         self.cursor = self.connection.cursor()
@@ -122,11 +124,13 @@ class SQLiteTodos:
 
     def update(self, id, data):
         data.pop('csrf_token')
-        update_sql = "UPDATE Todos "
-        for label, value in data.items():
-            update_sql += f"SET {label} = {value},"
-        update_sql.pop(-1)
-        update_sql += f" WHERE id = {id};"       
+        update_sql = f"""
+            UPDATE Todos
+            SET title='{data['title']}',
+                description='{data['description']}',
+                done={int(data['done'])}
+            WHERE id = {id};
+        """
         self.execute_sql(update_sql)
 
     def delete(self, id):

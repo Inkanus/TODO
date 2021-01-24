@@ -7,15 +7,18 @@ apis = Blueprint('apis', __name__)
 
 todos = SQLiteTodos()
 
+
 @apis.errorhandler(404)
 def not_found(error):
     return make_response(
         jsonify({'error': 'Not found', 'status_code': 404}), 404)
 
+
 @apis.errorhandler(400)
 def bad_request(error):
     return make_response(
         jsonify({'error': 'Bad request', 'status_code': 400}), 400)
+
 
 @apis.route("/api/v1/todos/<int:todo_id>", methods=["GET"])
 def get_todo(todo_id):
@@ -23,6 +26,7 @@ def get_todo(todo_id):
     if not todo:
         abort(404)
     return jsonify({"todo": todo})
+
 
 @apis.route("/api/v1/todos/", methods=["POST"])
 def create_todo():
@@ -37,12 +41,14 @@ def create_todo():
     todos.create(todo)
     return jsonify({'todo': todo}), 201
 
-@app.route("/api/v1/todos/<int:todo_id>", methods=['DELETE'])
+
+@apis.route("/api/v1/todos/<int:todo_id>", methods=['DELETE'])
 def delete_todo(todo_id):
     result = todos.delete(todo_id)
     if not result:
         abort(404)
     return jsonify({'result': result})
+
 
 @apis.route("/api/v1/todos/<int:todo_id>", methods=["PUT"])
 def update_todo(todo_id):
@@ -65,6 +71,3 @@ def update_todo(todo_id):
     }
     todos.update(todo_id, todo)
     return jsonify({'todo': todo})
-
-
-

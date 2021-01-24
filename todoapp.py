@@ -10,6 +10,7 @@ app.register_blueprint(apis)
 
 todos = SQLiteTodos()
 
+
 @app.route("/todos/", methods=["GET", "POST"])
 def todos_list():
     form = TodoForm()
@@ -19,7 +20,9 @@ def todos_list():
             todos.create(form.data)
         return redirect(url_for("todos_list"))
 
-    return render_template("todos.html", form=form, todos=todos.all(), error=error)
+    return render_template("todos.html", form=form,
+                           todos=todos.all(), error=error)
+
 
 @app.route("/todos/<int:todo_id>/", methods=["GET", "POST"])
 def todo_details(todo_id):
@@ -28,7 +31,7 @@ def todo_details(todo_id):
 
     if request.method == "POST":
         if form.validate_on_submit():
-            todos.update(todo_id - 1, form.data)
+            todos.update(todo_id, form.data)
         return redirect(url_for("todos_list"))
     return render_template("todo.html", form=form, todo_id=todo_id)
 
